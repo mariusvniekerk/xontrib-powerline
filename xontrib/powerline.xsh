@@ -18,6 +18,7 @@ $PL_DEFAULT_COLORS = {
     'time': ('WHITE', 'BLUE'),
     'short_cwd': ('WHITE', '#333'),
     'cwd': ('WHITE', '#333'),
+    'cwd_git': ('BLUE', 'WHITE'),
     # branch always green/red
     'virtualenv': ('INTENSE_CYAN', 'BLUE'),
     'rtns': ('WHITE', 'RED'),
@@ -91,7 +92,7 @@ def cwd():
                     break
                 ni -= 1
         if ni != 0:  # if ni ==0 subdirectory matching failed
-            ps[ni] = '{0}{1}{2}'.format($PL_COLORS['cwd'][0],ps[ni], $PL_COLORS['cwd'][1])
+            ps[ni] = '{{{0}}}{1}{{{2}}}'.format($PL_COLORS['cwd_git'][0],ps[ni], $PL_COLORS['cwd_git'][1])
 
     if len(ps) > $PL_PARTS:
         new_ps = [ps[0]]
@@ -100,7 +101,7 @@ def cwd():
         ps = new_ps
 
     ps_join = (' %s ' % $PL_SEP_THIN).join(ps)
-    return Section(' %s ' % ps_join, *$PL_COLORS['cwd'])
+    return Section(' %s ' % ps_join, $PL_COLORS['cwd'][0], $PL_COLORS['cwd'][1])
 
 
 @register_sec
