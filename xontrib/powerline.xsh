@@ -22,7 +22,7 @@ $PL_DEFAULT_COLORS = {
     'virtualenv': ('INTENSE_CYAN', 'BLUE'),
     'rtns': ('WHITE', 'RED'),
     # full_rtns always red/gray
-    'rtns': ('WHITE', '#444'),
+    'timing': ('WHITE', '#444'),
     # full_proc always red/gray
     'who': ('WHITE', '#555')
 }
@@ -112,13 +112,13 @@ def branch():
 @register_sec
 def virtualenv():
     if $PROMPT_FIELDS['env_name']():
-        return Section(' 🐍 {env_name} ', *$PL_COLORS['venv'])
+        return Section(' 🐍 {env_name} ', *$PL_COLORS['virtualenv'])
 
 
 @register_sec
 def rtns():
     if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
-        return Section(' ! ', 'WHITE', 'RED')
+        return Section(' ! ', *$PL_COLORS['rtns'])
 
 
 @register_sec
