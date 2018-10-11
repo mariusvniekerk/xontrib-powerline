@@ -54,7 +54,7 @@ def register_sec(f):
 
 @register_sec
 def history():
-    return Section(' %d ' % len(__xonsh_history__), *$PL_COLORS['history'])
+    return Section(' %d ' % len(__xonsh__.history), *$PL_COLORS['history'])
 
 
 @register_sec
@@ -114,14 +114,14 @@ def virtualenv():
 
 @register_sec
 def rtns():
-    if __xonsh_history__.rtns and __xonsh_history__.rtns[-1] != 0:
+    if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
         return Section(' ! ', *$PL_COLORS['rtns'])
 
 
 @register_sec
 def full_rtns():
-    if __xonsh_history__.rtns:
-        rtn = __xonsh_history__.rtns[-1]
+    if __xonsh__.history.rtns:
+        rtn = __xonsh__.history.rtns[-1]
         if rtn != 0:
             color = 'RED'
         else:
@@ -132,16 +132,16 @@ def full_rtns():
 
 @register_sec
 def timing():
-    if __xonsh_history__.tss:
-        tss = __xonsh_history__.tss[-1]
+    if __xonsh__.history.tss:
+        tss = __xonsh__.history.tss[-1]
 
         return Section(' %.2fs ' % (tss[1] - tss[0]), *$PL_COLORS['timing'])
 
 
 @register_sec
 def full_proc():
-    if __xonsh_history__.buffer:
-        lst = __xonsh_history__.buffer[-1]
+    if __xonsh__.history.buffer:
+        lst = __xonsh__.history.buffer[-1]
         if lst['rtn'] != 0:
             color = 'RED'
         else:
