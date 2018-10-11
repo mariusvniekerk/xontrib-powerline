@@ -224,12 +224,12 @@ def pl_build_prompt():
     for var in 'PROMPT RPROMPT TOOLBAR'.split():
         varname = 'PL_' + var
         defname = 'PL_DEFAULT_' + var
-        if varname not in __xonsh_env__:
-            __xonsh_env__[varname] = __xonsh_env__[defname]
+        if varname not in __xonsh__.env:
+            __xonsh__.env[varname] = __xonsh__.env[defname]
 
     new_colors = $PL_DEFAULT_COLORS.copy()
-    if 'PL_COLORS' in __xonsh_env__:
-        new_colors.update(__xonsh_env__['PL_COLORS'])
+    if 'PL_COLORS' in __xonsh__.env:
+        new_colors.update(__xonsh__.env['PL_COLORS'])
     $PL_COLORS = new_colors
 
     $PROMPT = prompt_builder($PL_PROMPT)
