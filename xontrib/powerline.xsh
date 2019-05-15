@@ -13,6 +13,20 @@ $PL_PARTS = 10
 $PL_DEFAULT_PROMPT = 'short_cwd>rtns'
 $PL_DEFAULT_RPROMPT = 'history>time'
 $PL_DEFAULT_TOOLBAR = 'who>cwd>branch>virtualenv>full_proc'
+$PL_DEFAULT_COLORS = {
+    'history': ('WHITE', '#333'),
+    'time': ('WHITE', 'BLUE'),
+    'short_cwd': ('WHITE', '#333'),
+    'cwd': ('WHITE', '#333'),
+    'cwd_git': ('BLUE', 'WHITE'),
+    # branch always green/red
+    'virtualenv': ('INTENSE_CYAN', 'BLUE'),
+    'rtns': ('WHITE', 'RED'),
+    # full_rtns always red/gray
+    'timing': ('WHITE', '#444'),
+    # full_proc always red/gray
+    'who': ('WHITE', '#555')
+}
 
 if ptk_shell_type() == 'prompt_toolkit2':
     $PTK_STYLE_OVERRIDES['bottom-toolbar'] = 'noreverse'
@@ -44,17 +58,17 @@ def register_sec(f):
 
 @register_sec
 def history():
-    return Section(' %d ' % len(__xonsh__.history), 'WHITE', '#333')
+    return Section(' %d ' % len(__xonsh__.history), *$PL_COLORS['history'])
 
 
 @register_sec
 def time():
-    return Section(strftime(' %H:%M '), 'WHITE', 'BLUE')
+    return Section(strftime(' %H:%M '), *$PL_COLORS['time'])
 
 
 @register_sec
 def short_cwd():
-    return Section(' {short_cwd} ', 'WHITE', '#333')
+    return Section(' {short_cwd} ', *$PL_COLORS['short_cwd'])
 
 
 def compress_home(path):
@@ -78,7 +92,7 @@ def cwd():
                     break
                 ni -= 1
         if ni != 0:  # if ni ==0 subdirectory matching failed
-            ps[ni] = '{BLUE}%s{WHITE}' % ps[ni]
+            ps[ni] = '{{{0}}}{1}{{{2}}}'.format($PL_COLORS['cwd_git'][0],ps[ni], $PL_COLORS['cwd_git'][1])
 
     if len(ps) > $PL_PARTS:
         new_ps = [ps[0]]
@@ -87,7 +101,7 @@ def cwd():
         ps = new_ps
 
     ps_join = (' %s ' % $PL_SEP_THIN).join(ps)
-    return Section(' %s ' % ps_join, 'WHITE', '#333')
+    return Section(' %s ' % ps_join, $PL_COLORS['cwd'][0], $PL_COLORS['cwd'][1])
 
 
 @register_sec
@@ -99,13 +113,13 @@ def branch():
 @register_sec
 def virtualenv():
     if $PROMPT_FIELDS['env_name']():
-        return Section(' 🐍 {env_name} ', 'INTENSE_CYAN', 'BLUE')
+        return Section(' 🐍 {env_name} ', *$PL_COLORS['virtualenv'])
 
 
 @register_sec
 def rtns():
     if __xonsh__.history.rtns and __xonsh__.history.rtns[-1] != 0:
-        return Section(' ! ', 'WHITE', 'RED')
+        return Section(' ! ', *$PL_COLORS['rtns'])
 
 
 @register_sec
@@ -125,7 +139,7 @@ def timing():
     if __xonsh__.history.tss:
         tss = __xonsh__.history.tss[-1]
 
-        return Section(' %.2fs ' % (tss[1] - tss[0]), 'WHITE', '#444')
+        return Section(' %.2fs ' % (tss[1] - tss[0]), *$PL_COLORS['timing'])
 
 
 @register_sec
@@ -143,7 +157,7 @@ def full_proc():
 
 @register_sec
 def who():
-    return Section(' {user}@{hostname} ', 'WHITE', '#555')
+    return Section(' {user}@{hostname} ', *$PL_COLORS['who'])
 
 
 def prompt_builder(var, right=False):
@@ -216,6 +230,11 @@ def pl_build_prompt():
         defname = 'PL_DEFAULT_' + var
         if varname not in __xonsh__.env:
             __xonsh__.env[varname] = __xonsh__.env[defname]
+
+    new_colors = $PL_DEFAULT_COLORS.copy()
+    if 'PL_COLORS' in __xonsh__.env:
+        new_colors.update(__xonsh__.env['PL_COLORS'])
+    $PL_COLORS = new_colors
 
     $PROMPT = prompt_builder($PL_PROMPT)
     $BOTTOM_TOOLBAR = prompt_builder($PL_TOOLBAR)
